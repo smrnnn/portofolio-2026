@@ -5,12 +5,13 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\FinalProjectResource\Pages;
 use App\Models\FinalProject;
 
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 
-use Filament\Forms;
-
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
@@ -24,58 +25,75 @@ class FinalProjectResource extends Resource
     protected static ?string $model = FinalProject::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static ?string $navigationLabel = 'Final Projects';
+    protected static ?string $navigationLabel = 'Project';
+    protected static ?string $modelLabel = 'Project';
+    protected static ?string $pluralModelLabel = 'Project';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
 
-                TextInput::make('title')
-                    ->label('Judul')
-                    ->required(),
+                Section::make('Informasi Project')
+                    ->columns(2)
+                    ->schema([
 
-                Textarea::make('description')
-                    ->label('Deskripsi Singkat')
-                    ->rows(4),
+                        TextInput::make('title')
+                            ->label('Judul')
+                            ->required(),
 
-                Textarea::make('problem')
-                    ->label('Analisis Masalah')
-                    ->rows(4),
+                        Textarea::make('description')
+                            ->label('Deskripsi Singkat')
+                            ->rows(3),
 
-                Textarea::make('main_feature')
-                    ->label('Fitur Utama')
-                    ->helperText('Pisahkan dengan koma'),
+                        Textarea::make('problem')
+                            ->label('Analisis Masalah')
+                            ->rows(3),
 
-                TextInput::make('tech_stack')
-                    ->label('Tech Stack')
-                    ->helperText('Contoh: Laravel, Filament v3, MariaDB'),
+                        Textarea::make('main_feature')
+                            ->label('Fitur Utama')
+                            ->rows(3)
+                            ->helperText('Pisahkan dengan koma'),
 
-                Select::make('status')
-                    ->label('Status')
-                    ->options([
-                        'Planning' => 'Planning',
-                        'Sedang Dikerjakan' => 'Sedang Dikerjakan',
-                        'Selesai' => 'Selesai',
-                        'On Hold' => 'On Hold',
-                    ])
-                    ->required(),
+                        TextInput::make('tech_stack')
+                            ->label('Tech Stack')
+                            ->helperText('Contoh: Laravel, Filament v3, MariaDB'),
 
-                TextInput::make('progress')
-                    ->label('Progress (%)')
-                    ->numeric()
-                    ->default(0),
+                        Select::make('status')
+                            ->label('Status')
+                            ->options([
+                                'Planning' => 'Planning',
+                                'Sedang Dikerjakan' => 'Sedang Dikerjakan',
+                                'Selesai' => 'Selesai',
+                                'On Hold' => 'On Hold',
+                            ])
+                            ->required(),
+                    ]),
 
-                FileUpload::make('erd_image')
-                    ->label('ERD Image')
-                    ->image()
-                    ->directory('erd'),
+                Section::make('Progress Project')
+                    ->columns(2)
+                    ->schema([
 
-                TextInput::make('year')
-                    ->label('Tahun')
-                    ->numeric(),
+                        TextInput::make('progress')
+                            ->label('Progress')
+                            ->numeric()
+                            ->suffix('%')
+                            ->default(0),
 
+                        TextInput::make('year')
+                            ->label('Tahun')
+                            ->numeric(),
+                    ]),
+
+                Section::make('Dokumen')
+                    ->schema([
+
+                        FileUpload::make('erd_image')
+                            ->label('ERD Image')
+                            ->image()
+                            ->directory('erd')
+                            ->imagePreviewHeight('250'),
+                    ]),
             ]);
     }
 
@@ -85,43 +103,33 @@ class FinalProjectResource extends Resource
             ->columns([
 
                 TextColumn::make('title')
+                    ->label('Judul')
                     ->searchable(),
 
-                TextColumn::make('status'),
+                TextColumn::make('status')
+                    ->badge(),
 
                 TextColumn::make('progress')
                     ->suffix('%'),
 
                 TextColumn::make('year'),
-
-            ])
-            ->filters([
-                //
             ])
             ->actions([
-
                 Tables\Actions\EditAction::make(),
-
             ])
             ->bulkActions([
-
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-
             ]);
     }
 
     public static function getPages(): array
     {
         return [
-
             'index' => Pages\ListFinalProjects::route('/'),
-
             'create' => Pages\CreateFinalProject::route('/create'),
-
             'edit' => Pages\EditFinalProject::route('/{record}/edit'),
-
         ];
     }
 }

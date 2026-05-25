@@ -3,11 +3,6 @@
 use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
-use Illuminate\Support\Facades\Response;
-
-/* NOTE: Do Not Remove
-/ Livewire asset handling if using sub folder in domain
-*/
 
 Livewire::setUpdateRoute(function ($handle) {
     return Route::post(config('app.asset_prefix') . '/livewire/update', $handle);
@@ -16,13 +11,17 @@ Livewire::setUpdateRoute(function ($handle) {
 Livewire::setScriptRoute(function ($handle) {
     return Route::get(config('app.asset_prefix') . '/livewire/livewire.js', $handle);
 });
-/*
-/ END
-*/
+
 Route::get('/', function () {
-    return view('home', [
-        'projects' => \App\Models\FinalProject::all()
-    ]);
+
+    $projects = \App\Models\FinalProject::all();
+
+    $profile = \App\Models\Profile::first();
+
+    return view('home', compact(
+        'projects',
+        'profile'
+    ));
 });
 
 Route::post('/contact', [ContactController::class, 'store']);

@@ -88,10 +88,6 @@
             <a href="#" class="nav-link" id="nav-home">Home</a>
             <a href="#" class="nav-link" id="nav-projects">Projects</a>
             <a href="#" class="nav-link" id="nav-contact">Contact</a>
-            <a href="/admin"
-                style="margin-left:8px;padding:8px 18px;background:#fafafa;color:#09090b;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;">
-                    Admin Panel
-            </a>
         </div>
     </div>
 </nav>
@@ -112,17 +108,33 @@
             <!-- FOTO -->
             <div style="display:flex;justify-content:center;">
 
-                <img
-                    src="{{ asset('assets/images/profile.jpg') }}"
-                    alt="Profile"
-                    style="
-                        width:320px;
-                        height:320px;
-                        object-fit:cover;
-                        border-radius:24px;
-                        border:1px solid #27272a;
-                    "
-                >
+                @if($profile?->photo)
+                    <img
+                        src="{{ asset('storage/' . $profile->photo) }}"
+                        alt="Profile"
+                        style="
+                            width:320px;
+                            height:320px;
+                            object-fit:cover;
+                            border-radius:24px;
+                        "
+                    >
+                @else
+                    <div
+                        style="
+                            width:320px;
+                            height:320px;
+                            border:1px dashed #3f3f46;
+                            border-radius:24px;
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            color:#71717a;
+                        "
+                    >
+                        Belum ada foto
+                    </div>
+                @endif
 
             </div>
 
@@ -140,7 +152,7 @@
                     color:#71717a;
                     margin-bottom:24px;
                 ">
-                    FULL-STACK DEVELOPER
+                    {{ $profile?->badge }}
                 </div>
 
                 <h1 class="serif"
@@ -150,7 +162,7 @@
                         margin:0 0 24px;
                         letter-spacing:-0.03em;
                     ">
-                    Iis Sumarni
+                    {{ $profile?->name }}
                 </h1>
 
                 <p style="
@@ -161,7 +173,7 @@
                     max-width:580px;
                     line-height:1.7;
                 ">
-                    I design and build delightful digital experiences.
+                    {{ $profile?->tagline }}
                 </p>
 
                 <div style="display:flex;gap:12px;flex-wrap:wrap;">
@@ -216,12 +228,6 @@
                     line-height:1.8;
                     margin:0 0 20px;
                 ">
-                    Saya Iis Sumarni, mahasiswa Program Studi Teknik Informatika yang memiliki ketertarikan 
-                    dalam bidang pengembangan sistem informasi dan web development. 
-                    Saya fokus mempelajari serta mengembangkan aplikasi 
-                    dengan dukungan teknologi seperti Filament v3, Livewire, Blade, dan MariaDB. 
-                    Sebagai mahasiswa Teknik Informatika, saya memiliki semangat belajar yang tinggi dan senang 
-                    mengeksplorasi teknologi baru untuk meningkatkan kemampuan di bidang pemrograman.
                 </p>
 
                 <p style="
@@ -230,6 +236,7 @@
                     line-height:1.8;
                     margin:0;
                 ">
+                    {!! nl2br(e($profile?->about_me)) !!}
                 </p>
 
             </div>
@@ -249,14 +256,13 @@
             display:grid;
             grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
             gap:14px;">
-
-            <div class="tech-card">Laravel</div>
-            <div class="tech-card">Filament v3</div>
-            <div class="tech-card">Livewire</div>
-            <div class="tech-card">Blade</div>
-            <div class="tech-card">MariaDB</div>
-            <div class="tech-card">Docker</div>
-
+                @if($profile?->tech_stack)
+                @foreach(explode(',', $profile->tech_stack) as $tech)
+                    <div class="tech-card">
+                        {{ trim($tech) }}
+                    </div>
+                @endforeach
+            @endif
         </div>
     </section>
 

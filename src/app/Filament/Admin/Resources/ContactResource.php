@@ -4,10 +4,16 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\ContactResource\Pages;
 use App\Models\Contact;
+
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
+
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 
 class ContactResource extends Resource
 {
@@ -25,7 +31,24 @@ class ContactResource extends Resource
     {
         return $form
             ->schema([
-                //
+
+                TextInput::make('name')
+                    ->label('Nama')
+                    ->required()
+                    ->maxLength(255),
+
+                TextInput::make('email')
+                    ->label('Email')
+                    ->email()
+                    ->required()
+                    ->maxLength(255),
+
+                Textarea::make('message')
+                    ->label('Pesan')
+                    ->required()
+                    ->rows(6)
+                    ->columnSpanFull(),
+
             ]);
     }
 
@@ -34,19 +57,24 @@ class ContactResource extends Resource
         return $table
             ->columns([
 
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
+                    ->label('Nama')
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
+                    ->label('Email')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('message')
+                TextColumn::make('message')
+                    ->label('Pesan')
                     ->limit(50)
                     ->wrap(),
 
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime('d M Y H:i'),
+                TextColumn::make('created_at')
+                    ->label('Tanggal')
+                    ->dateTime('d M Y H:i')
+                    ->sortable(),
 
             ])
 
@@ -57,6 +85,8 @@ class ContactResource extends Resource
             ->actions([
 
                 Tables\Actions\ViewAction::make(),
+
+                Tables\Actions\EditAction::make(),
 
                 Tables\Actions\DeleteAction::make(),
 
@@ -83,7 +113,13 @@ class ContactResource extends Resource
     public static function getPages(): array
     {
         return [
+
             'index' => Pages\ListContacts::route('/'),
+
+            'create' => Pages\CreateContact::route('/create'),
+
+            'edit' => Pages\EditContact::route('/{record}/edit'),
+
         ];
     }
 }
